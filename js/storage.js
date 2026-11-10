@@ -320,6 +320,69 @@ const Storage = (() => {
 
 	}
 
+
+
+	function getStorageStats(){
+
+		let bytes = 0;
+		const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024; // Standard 5 MB localStorage quota
+
+		try {
+
+			for(let i = 0; i < localStorage.length; i++){
+
+				const key = localStorage.key(i);
+
+				if(key && (key === STORAGE_KEY || key.startsWith("tech_archive_"))){
+
+					const val = localStorage.getItem(key) || "";
+
+					bytes += new Blob([key + val]).size;
+
+				}
+
+			}
+
+		}
+		catch(e){
+
+			console.error(
+				"Failed to calculate storage size",
+				e
+			);
+
+		}
+
+		// Pick the closest human-readable unit for used amount (KB or MB)
+		let usedText = "";
+
+		if(bytes < 1024 * 1024){
+
+			usedText = (bytes / 1024).toFixed(1) + " KB";
+
+		}
+		else{
+
+			usedText = (bytes / (1024 * 1024)).toFixed(1) + " MB";
+
+		}
+
+		const percent = ((bytes / STORAGE_LIMIT_BYTES) * 100).toFixed(1);
+
+		return {
+
+			bytes,
+
+			usedText,
+
+			limitText: "5 MB",
+
+			percent
+
+		};
+
+	}
+
     return {
 
 		init,
@@ -342,7 +405,9 @@ const Storage = (() => {
 
 		importJSON,
 
-		exportJSON
+		exportJSON,
+
+		getStorageStats
 
 	};
 

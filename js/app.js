@@ -256,16 +256,19 @@ function refreshSearch() {
     UI.renderStickySection(App.notes);
 
     const stats = SearchIndex.stats();
+    const storageStats = Storage.getStorageStats();
     const totalMatches = searchOutput.results.length;
     const limit = SearchConfig.maxResults || 20;
+
+    const storageText = ` | Storage: ${storageStats.usedText} / ${storageStats.limitText} (${storageStats.percent}%)`;
 
     let statusText = "";
     if (keyword) {
         const showingCount = Math.min(totalMatches, limit);
-        statusText = `Found ${totalMatches} matched result${totalMatches !== 1 ? "s" : ""}${totalMatches > limit ? ` (showing top ${showingCount})` : ""} | Notes: ${stats.notes} | Indexed Words: ${stats.words}`;
+        statusText = `Found ${totalMatches} matched result${totalMatches !== 1 ? "s" : ""}${totalMatches > limit ? ` (showing top ${showingCount})` : ""} | Notes: ${stats.notes} | Indexed Words: ${stats.words}${storageText}`;
     } else {
         const showingCount = Math.min(totalMatches, limit);
-        statusText = `Recent Notes (${showingCount} of ${totalMatches}) | Notes: ${stats.notes} | Indexed Words: ${stats.words}`;
+        statusText = `Recent Notes (${showingCount} of ${totalMatches}) | Notes: ${stats.notes} | Indexed Words: ${stats.words}${storageText}`;
     }
 
     document.getElementById("status").textContent = statusText;
